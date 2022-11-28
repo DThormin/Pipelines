@@ -1,0 +1,32 @@
+pipeline {
+    agent any
+    parameters{
+        string defaultValue: 'i-06fc73383xxxxxxxxx', description: 'id referente a ec2 que será startada', name: 'name'  
+        string defaultValue: 'AKIAxxxxxxxxxxxxxxxxxxxx', description: 'acesso id aws', name: 'acesslog'  
+        string defaultValue: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', description: 'chave de acesso aws', name: 'acesskey'  
+        string defaultValue: 'sa-east-1', description: 'regiao', name: 'region'  
+    }
+    stages {
+        stage('Credentials') {
+            steps{
+                script{
+                    
+                    sh '''
+                        aws configure set aws_access_key_id ${acesslog} 
+                        aws configure set aws_secret_access_key ${acesskey}
+                        aws configure set region ${region}
+                        
+                    '''
+                }
+            }
+        }
+        stage('Start ec2') {
+            steps{
+                script{
+                    echo " ${name}"
+                    sh 'aws ec2 start-instances --instance-ids ${name}'
+                }
+            }
+        }
+    }
+}
